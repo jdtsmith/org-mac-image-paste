@@ -30,14 +30,14 @@ Not (yet) available on MELPA.  For now, clone the repo and, e.g.
 
 ```elisp
 (use-package org-mac-image-paste
-  :load-path "~/code/emacs/org-mac-image-paste"
+  :load-path "~/code/emacs/org-mac-image-paste" ; or wherever you cloned to
   :config (org-mac-image-paste-mode 1)
   :bind (:map org-mode-map ("<f6>" . org-mac-image-paste-refresh-this-node)))
 ```
 
 ## Other Requirements
 
-The following are required for `org-mac-image-paste` to work:
+The following are necessary for `org-mac-image-paste` to work:
 
 - The excellent [emacs-mac](https://bitbucket.org/mituharu/emacs-mac/) fork of emacs.
 - The in-built `sips` tool (for querying image dpi).
