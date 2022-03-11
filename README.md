@@ -37,7 +37,7 @@ Not (yet) available on MELPA.  For now, clone the repo and, e.g.
 
 ## Other Requirements
 
-The following are required for org-mac-image-paste:
+The following are required for `org-mac-image-paste` to work:
 
 - The excellent [emacs-mac](https://bitbucket.org/mituharu/emacs-mac/) fork of emacs.
 - The in-built `sips` tool (for querying image dpi).
