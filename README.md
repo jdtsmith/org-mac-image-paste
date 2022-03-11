@@ -9,7 +9,7 @@ into org buffers_, when using emacs-mac.
 
 - Uses the `image-io` image type, which the emacs-mac fork provides,
   for very fast display of image/PDF chunks.
-- Uses applescript to examine the clipboard for image data, saving
+- Uses emacs-mac and applescript to examine the clipboard for image data, saving
   either a PDF or (via `pngpaste`) a PNG image file to a name like
   `pasted_graphic...`
 - Uses `org-attach` to _attach_ the pasted images to the containing
