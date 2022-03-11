@@ -1,5 +1,5 @@
 # org-mac-image-paste
-Paste images and PDFs directly into org files on Mac. 
+Paste images and cropped PDF clips directly into org files on Mac. 
 
 This simple package modifies org-mode so that images (including
 cropped segments of PDFs) on the clipboard can be _pasted directly
