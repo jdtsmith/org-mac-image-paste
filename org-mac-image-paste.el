@@ -225,10 +225,11 @@ If not in a node, refresh entire file."
 
 (defun omip-dnd (url _action)
   "Handle file drag-and-drop."
-  (if (string-match (rx bos "file://") url)
-      (let* ((file (substring url (match-end 0)))
-	     (tmp-file (concat (temporary-file-directory)
-			       (file-name-base file))))
+  (if-let ((url (url-generic-parse-url url))
+	   ((equal (url-type url) "file"))
+	   (file (url-unhex-string (url-filename url))))
+      (let* ((tmp-file (concat (temporary-file-directory)
+			       (file-name-nondirectory file))))
 	(copy-file file tmp-file)
 	(omip-attach-and-display-file tmp-file))))
 
