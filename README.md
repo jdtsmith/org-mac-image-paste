@@ -65,11 +65,11 @@ If you prefer an image/PDF to display at a different size, preface it with (e.g.
 
 If you bind `org-mac-image-paste-refresh-this-node` to a convenient key, you can use it to instantly refresh the inline images of just the containing node, e.g. after you have changed the `:width`.
 
-## Other Thoughts
+## Other Thoughts/Future
 
 I wish this package didn't exist. Pasting images and PDF fragments into files is a rather basic capability which many may reasonably expect to "just work". I also wish it were fully cross-platform, and didn't rely on external tools to interact with clipboard image data, or determine image resolution and crop information.
 
-But, AFAICT, there is no means within emacs to query the clipboard for image data.  Note that emacs-mac does present `'image-io` for (most) image data on the clipboard.
+But, AFAICT, there is no means within emacs to query the clipboard for image data.  Note that emacs-mac does present `'image-io` for (most) image data on the clipboard.  
 
 What Emacs/Org would need to make this possible:
 
@@ -77,4 +77,5 @@ What Emacs/Org would need to make this possible:
 - Automatic handling of high-DPI image data (may be challenging given the different approaches across platforms).
 - Native PDF display, respecting the `CropBox:` parameter.
 
-(N.B. Imagemagick can handle displaying PDFs inline already.)
+Emacs 29 already has support for a
+[`yank-media`](https://lars.ingebrigtsen.no/2021/11/08/copying-media-to-emacs/) command, so perhaps this kind of functionality will be coming natively to Org soon.  Imagemagick can handle displaying PDFs inline already.
