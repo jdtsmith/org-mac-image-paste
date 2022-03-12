@@ -81,12 +81,54 @@ return theFile"
 Uses pngpaste for speed.")
 
 (defconst omip--pdfinfo-box-regex
-  (rx bol "MediaBox:"
+  (rx bol "CropBox:"
       (+ ?\s) (group (+ (any ?. num))) (+ ?\s) (group (+ (any ?. num)))
       (+ ?\s) (group (+ (any ?. num))) (+ ?\s) (group (+ (any ?. num)))?\n
-      "CropBox:" (+ ?\s)
+      (* nonl) ?\n
+      "TrimBox:" (+ ?\s)
       (group (+ (any ?. num))) (+ ?\s) (group (+ (any ?. num))) (+ ?\s)
       (group (+ (any ?. num))) (+ ?\s) (group (+ (any ?. num)))))
+
+(defun omip-attach-and-display-file (file)
+  "Attach file FILE, link and display image. "
+  (if-let (((string-suffix-p ".png" file)) ; PNG, check for HDPI
+	   (sips-str (string-trim
+		      (with-output-to-string
+			(call-process "sips" nil standard-output nil
+				      "-g" "dpiWidth" "-g" "dpiHeight"
+				      file))))
+	   ((string-match
+	     (rx "dpi" (or "Width" "Height") ?: (+ ?\s)
+		 (group (+ (any num ?.))) (* nonl) ?\n (+ ?\s)
+		 "dpi" (or "Width" "Height") ?: (+ ?\s)
+		 (group (+ (any num ?.))))
+	     sips-str))
+	   ((> (sqrt (* (string-to-number (match-string 1 sips-str))
+			(string-to-number (match-string 2 sips-str))))
+	       omip-high-dpi-limit))
+	   (new (concat (substring file 0 -4) "@2x.png")))
+      (progn (rename-file file new t)
+	     (setq file new))
+    (if-let (((string-suffix-p ".pdf" file)) ; PDF, check for crop
+	     (pdfinfo (with-output-to-string
+			(call-process "pdfinfo" nil standard-output nil
+				      "-box" file)))
+	     ((string-match omip--pdfinfo-box-regex pdfinfo)))
+	(pcase-let* ((`(,cx0 ,cy0 ,cx1 ,cy1 ,tx0 ,ty0 ,tx1 ,ty1 )
+		      (cl-loop for i from 1 to 8
+			       collect (string-to-number
+					(match-string i pdfinfo)))))
+	  (unless (and (= tx0 cx0) (= ty0 cy0) (= tx1 cx1) (= ty1 cy1))
+	    (let* ((crop-info (format "_%0.1f_%0.1f_%0.1f_%0.1f" ; w h x y
+				      (- cx1 cx0) (- cy1 cy0) cx0 (- ty1 cy1)))
+		   (new (concat (substring file 0 -4)
+				crop-info ".pdf")))
+	      (rename-file file new t)
+	      (setq file new))))))
+  (let ((org-attach-store-link-p 'attached))
+    (org-attach-attach file nil 'mv))
+  (org-insert-link nil (caar org-stored-links) "")
+  (org-display-inline-images nil t (line-beginning-position) (point)))
 
 (defun omip-org-yank (&optional _arg)
   "Yank, creating an org attachment:link if image/pdf on the clipboard.
@@ -111,44 +153,7 @@ the origin for crop, and PDF boxes use the lower left."
 			       (call-process "osascript" nil standard-output nil "-e"
 					     (format omip--save-script base)))))
 	  (when (and (not (string-empty-p attach-file)) (file-exists-p attach-file))
-	    (if-let (((string-suffix-p ".png" attach-file)) ; PNG, check for HDPI
-		     (sips-str (string-trim
-				(with-output-to-string
-				  (call-process "sips" nil standard-output nil
-						"-g" "dpiWidth" "-g" "dpiHeight"
-						attach-file))))
-		     ((string-match
-		       (rx "dpi" (or "Width" "Height") ?: (+ ?\s)
-			   (group (+ (any num ?.))) (* nonl) ?\n (+ ?\s)
-			   "dpi" (or "Width" "Height") ?: (+ ?\s)
-			   (group (+ (any num ?.))))
-		       sips-str))
-		     ((> (sqrt (* (string-to-number (match-string 1 sips-str))
-				  (string-to-number (match-string 2 sips-str))))
-			 omip-high-dpi-limit))
-		     (new (concat (substring attach-file 0 -4) "@2x.png")))
-		(progn (rename-file attach-file new t)
-		       (setq attach-file new))
-	      (if-let (((string-suffix-p ".pdf" attach-file)) ; PDF, check for crop
-		       (pdfinfo (with-output-to-string
-				  (call-process "pdfinfo" nil standard-output nil
-						"-box" attach-file)))
-		       ((string-match omip--pdfinfo-box-regex pdfinfo)))
-		  (pcase-let* ((`(,mx0 ,my0 ,mx1 ,my1 ,cx0 ,cy0 ,cx1 ,cy1)
-				(cl-loop for i from 1 to 8
-					 collect (string-to-number
-						  (match-string i pdfinfo)))))
-		    (unless (and (= mx0 cx0) (= my0 cy0) (= mx1 cx1) (= my1 cy1))
-		      (let* ((crop-info (format "_%0.1f_%0.1f_%0.1f_%0.1f" ; w h x y
-						(- cx1 cx0) (- cy1 cy0) cx0 (- my1 cy1)))
-			     (new (concat (substring attach-file 0 -4)
-					  crop-info ".pdf")))
-			(rename-file attach-file new t)
-			(setq attach-file new))))))
-	    (let ((org-attach-store-link-p 'attached))
-	      (org-attach-attach attach-file nil 'mv))
-	    (org-insert-link nil (caar org-stored-links) "")
-	    (org-display-inline-images nil t (line-beginning-position) (point))
+	    (omip-attach-and-display-file attach-file)
 	    t)))))
 
 (defalias 'omip--orig-create-image (symbol-function 'create-image)
