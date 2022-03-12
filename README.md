@@ -1,7 +1,7 @@
 # org-mac-image-paste
 Paste images and cropped PDF clips directly into org files on Mac. 
 
-This simple package modifies org-mode so that images (including
+This simple package enhances org-mode so that images (including
 cropped segments of PDFs) on the clipboard can be _pasted directly
 into org buffers_, when using emacs-mac.
 
@@ -15,10 +15,10 @@ into org buffers_, when using emacs-mac.
 - Uses `org-attach` to _attach_ the pasted images to the containing
   node.
 - Handles images copied from webpages, which are presented as URLs.
-- Automatically inserts a link at point and views pasted attachments inline.
+- Automatically inserts a link at point and views the pasted attachments inline.
 - High-DPI files (with advertised resolution above
   `omip-high-dpi-limit`) are marked as such with `@2x` in their
-  names, and automatically displayed at 50% scale to appear the correct size.
+  names, and automatically displayed at 50% scale for the correct size.
 - Cropped PDF files have their cropping information saved in the
   filename, and are displayed correctly.
 - Provides a convenience function to refresh all inline images in the
@@ -69,7 +69,7 @@ If you bind `org-mac-image-paste-refresh-this-node` to a convenient key, you can
 
 I wish this package didn't exist. Pasting images and PDF fragments into files is a rather basic capability which many may reasonably expect to "just work". I also wish it were fully cross-platform, and didn't rely on external tools to interact with clipboard image data, or determine image resolution and crop information.
 
-But, AFAICT, there is no means within emacs to query the clipboard for image data.  Note that emacs-mac does present `'image-io` for (most) image data is on the clipboard.
+But, AFAICT, there is no means within emacs to query the clipboard for image data.  Note that emacs-mac does present `'image-io` for (most) image data on the clipboard.
 
 What Emacs/Org would need to make this possible:
 
