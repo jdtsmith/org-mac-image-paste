@@ -23,6 +23,7 @@ into org buffers_, when using emacs-mac.
   filename, and are displayed correctly.
 - Provides a convenience function to refresh all inline images in the
   current node.
+- Also supports file drag-and-drop, with the same features.
 
 ## Install and Configuration
 

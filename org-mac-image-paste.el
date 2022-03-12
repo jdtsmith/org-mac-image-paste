@@ -223,6 +223,15 @@ If not in a node, refresh entire file."
 			 else collect ov)))
       (org-display-inline-images nil t beg end))))
 
+(defun omip-dnd (url _action)
+  "Handle file drag-and-drop."
+  (if (string-match (rx bos "file://") url)
+      (let* ((file (substring url (match-end 0)))
+	     (tmp-file (concat (temporary-file-directory)
+			       (file-name-base file))))
+	(copy-file file tmp-file)
+	(omip-attach-and-display-file tmp-file))))
+
 ;;;###autoload
 (define-minor-mode org-mac-image-paste-mode
   "Minor mode enabling direct pasting of images/pdfs in org-mode."
@@ -232,8 +241,11 @@ If not in a node, refresh entire file."
 	(cl-pushnew "pdf" image-file-name-extensions)
 	(advice-add #'org-yank :before-until #'omip-org-yank)
 	(advice-add #'org--create-inline-image :around
-		    #'omip--create-inline-image))
+		    #'omip--create-inline-image)
+	(cl-pushnew (cons (rx bos "file:") #'omip-dnd) dnd-protocol-alist))
     (cl-delete "pdf" image-file-name-extensions)
+    (setq dnd-protocol-alist
+	  (delq (rassq 'omip-dnd dnd-protocol-alist) dnd-protocol-alist))
     (advice-remove #'org-yank #'omip-org-yank)
     (advice-remove #'org--create-inline-image #'omip--create-inline-image)))
 
