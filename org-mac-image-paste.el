@@ -188,7 +188,8 @@ place of 'imagemagick, and sets PDF background to white.  To be
 set during `org--create-inline-image'."
   (when (not data-p)				   ; a file
     (if (string-suffix-p "@2x.png" file-or-data) ; HDPI PNG
-	(setq props (plist-put props :scale 0.5))
+	(unless (plist-get props :width)
+	  (setq props (plist-put props :scale 0.5)))
       (when (string-suffix-p ".pdf" file-or-data) ; PDF
 	(setq props (omip--calculate-pdf-properties file-or-data props))))
     (if (plist-member props :width)
