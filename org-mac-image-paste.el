@@ -212,17 +212,18 @@ If not in a node, refresh entire file."
     (let* ((elem (org-element-at-point))
 	   (beg (org-element-property :contents-begin elem))
 	   (end (org-element-property :contents-end elem)))
-      (if (and beg end)
-	  (setq org-inline-image-overlays
-		(cl-loop for ov in org-inline-image-overlays
-			 if (let ((ov-start (overlay-start ov))
-				  (ov-end (overlay-end ov)))
-			      (or (not ov-start) (not ov-end)
-				  (and (>= ov-start beg)
-				       (<= ov-end end))))
-			 do (delete-overlay ov)
-			 else collect ov)))
-      (org-display-inline-images nil t beg end))))
+      (when (and beg end)
+	(setq org-inline-image-overlays
+	      (cl-loop for ov in org-inline-image-overlays
+		       if (let ((ov-start (overlay-start ov))
+				(ov-end (overlay-end ov)))
+			    (if (and ov-start ov-end)
+				(if (and (>= ov-start beg) (<= ov-end end))
+				    (progn (delete-overlay ov) nil)
+				  t) ; not in this node, just collect
+			      nil))
+		       collect ov))
+	(org-display-inline-images nil t beg end)))))
 
 (defun omip-dnd (url _action)
   "Handle file drag-and-drop."
