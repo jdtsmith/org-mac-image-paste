@@ -5,6 +5,9 @@ This simple package enhances org-mode so that images (including
 cropped segments of PDFs) on the clipboard can be _pasted directly
 into org buffers_, when using emacs-mac.
 
+![omip](https://user-images.githubusercontent.com/93749/158043616-321c4a27-23c3-4ec6-a310-a7183dbe5a73.png)
+
+
 ## Features and Details:
 
 - Uses the `image-io` image type, which the emacs-mac fork provides,
