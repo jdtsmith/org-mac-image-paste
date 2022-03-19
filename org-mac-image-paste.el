@@ -149,10 +149,10 @@ the origin for crop, and PDF boxes use the lower left."
 			     (make-temp-name "pasted_graphic_") "-"
 			     (format-time-string "%s"))
 		attach-file (string-trim
-			     (with-output-to-string
-			       (call-process "osascript" nil standard-output nil "-e"
-					     (format omip--save-script base)))))
-	  (when (and (not (string-empty-p attach-file)) (file-exists-p attach-file))
+			     (do-applescript (format omip--save-script base))
+			     "[ \"]" "[ \"\n]"))
+	  (when (and (not (string-empty-p attach-file))
+		     (file-exists-p attach-file))
 	    (omip-attach-and-display-file attach-file)
 	    t)))))
 
