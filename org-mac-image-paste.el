@@ -208,7 +208,8 @@ To be set as :around advice for `org--create-inline-image'."
 If not in a node, refresh entire file."
   (interactive)
   (save-excursion
-    (org-previous-visible-heading 1)
+    (or (org-at-heading-p)
+	(org-previous-visible-heading 1))
     (let* ((elem (org-element-at-point))
 	   (beg (org-element-property :contents-begin elem))
 	   (end (org-element-property :contents-end elem)))
