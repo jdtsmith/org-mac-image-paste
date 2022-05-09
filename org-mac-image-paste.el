@@ -54,6 +54,8 @@
   (require 'cl-lib))
 (require 'org)
 (require 'org-element)
+(require 'org-attach)
+(require 'url-parse)
 
 (defcustom omip-high-dpi-limit 115.
   "DPI limit above which images are considered high-DPI.
@@ -109,7 +111,7 @@ Uses pngpaste for speed.")
 	   (new (concat (substring file 0 -4) "@2x.png")))
       (progn (rename-file file new t)
 	     (setq file new))
-    (if-let (((string-suffix-p ".pdf" file)) ; PDF, check for crop
+    (if-let (((string-suffix-p ".pdf" file)) ; PDF, check for distinct cropbox
 	     (pdfinfo (with-output-to-string
 			(call-process "pdfinfo" nil standard-output nil
 				      "-box" file)))
