@@ -1,4 +1,4 @@
-;;; omip.el --- Org Mac Image Paste  -*- lexical-binding: t; -*-
+;;; org-mac-image-paste.el         -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2022  J.D. Smith
 
@@ -166,7 +166,7 @@ the origin for crop, and PDF boxes use the lower left."
       (group (+ (any ?. num))) ?_ (group (+ (any ?. num))) ".pdf" eos))
 
 (defun omip--calculate-pdf-properties (filename props)
-  "Calculate a :crop property from the crop info encoded in a PDF filename (if any).
+  "Calculate a :crop property from info encoded in a PDF filename (if any).
 Pass a plist of image PROPS, which will be modified, e.g. by
 replacing :width with an equivalent :scale.  Returns the modified
 PROPS."
@@ -177,7 +177,7 @@ PROPS."
     (when-let ((width (car crop)) 
 	       (pwidth (plist-get props :width)))
       (plist-put props :scale (/ (float pwidth) width))
-      (setq props (org-plist-delete props :width)))	; scale overrides width
+      (setq props (org-plist-delete props :width))) ; scale overrides width
     (plist-put props :crop
 	       (cl-loop with scale = (or (plist-get props :scale) 1.0)
 			for c in crop collect (round (* c scale)))))
