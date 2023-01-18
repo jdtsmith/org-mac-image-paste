@@ -55,7 +55,7 @@ You may like to set to set the following org config variables:
 ```elisp
 (org-use-property-inheritance t) ;Inherit :ID/etc. from parent nodes
 (org-image-actual-width nil)  ;allow #+ATTR_ORG: :width 300 etc. 
-(org-attach-id-dir ".org-attach") ; make the attachment directoy less obvious
+(org-attach-id-dir ".org-attach") ; make the attachment directory less visible
 ```
 
 The inheritance setting allows you to give a top level heading (or even the entire file) an `:ID` (`M-x org-id-get-create`).  Then attachments created at lower levels will all be grouped together under that ID's attachment directory.
