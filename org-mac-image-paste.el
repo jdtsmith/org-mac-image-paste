@@ -248,7 +248,7 @@ If not in a node, refresh entire file."
 	(advice-add #'org-yank :before-until #'omip-org-yank)
 	(advice-add #'org--create-inline-image :around
 		    #'omip--create-inline-image)
-	(cl-pushnew (cons (rx bos "file:") #'omip-dnd) dnd-protocol-alist))
+	(setf (alist-get (rx bos "file:") dnd-protocol-alist nil nil #'equal) #'omip-dnd))
     (cl-delete "pdf" image-file-name-extensions)
     (setq dnd-protocol-alist
 	  (delq (rassq 'omip-dnd dnd-protocol-alist) dnd-protocol-alist))
